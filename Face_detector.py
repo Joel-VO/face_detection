@@ -18,3 +18,7 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.5], std=[0.5])
 ])
 
+PATH = "/Model_Files"
+# model = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE).to(device)
+# model.load_state_dict(torch.load(PATH, weights_only=True))
+# model.eval()
