@@ -62,9 +62,15 @@ class FaceDetectionCNN (nn.Module):
 INPUT_SHAPE = IMAGE_SIZE[0]*IMAGE_SIZE[1]
 HIDDEN_SHAPE = 10
 label_count = 0
+label = 0
 for _, labels in dataset:
-    label_count+=1
+    if label == labels:
+        continue
+    else:
+        label = labels
+        label_count+=1
 OUTPUT_SHAPE = label_count
+print(OUTPUT_SHAPE)
 
 # defining model, optimizer and loss_fn
 model = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE).to(device)
@@ -130,5 +136,5 @@ if __name__ == '__main__':
     main()
 
 #now add model exporting to enable use in opencv model
-PATH = "/Model_Files"
-torch.save(model.state_dict(),PATH)
+PATH = "/home/joel/coding/ide/pycharm/projects/face_detection/Model_Files/model_dict"
+torch.save(model.state_dict(),f=PATH)
