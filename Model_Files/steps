@@ -1,4 +1,0 @@
-1. dataset
-2. using opencv make a pipeline that can extract the faces
-3. train a CNN using the dataset
-4. export the model and then use in another python file to run everything

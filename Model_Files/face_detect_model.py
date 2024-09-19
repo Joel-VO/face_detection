@@ -108,8 +108,6 @@ model = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE).to(device)
 optimizer = torch.optim.SGD(params=model.parameters(), lr=0.01)
 loss_fn = nn.CrossEntropyLoss()
 
-# dummy_tensor = torch.randn(size = (1,224,224)).to(device)
-# model(dummy_tensor.unsqueeze(0))
 
 def testing( epochs, epoch, learning_model=model, loss_fn = loss_fn, data = test_batch):
     model.eval()
@@ -160,7 +158,7 @@ def training( epochs, epoch, learning_model=model, optimizer_fn=optimizer, loss_
     print(f"Epoch [{epoch + 1}/{epochs}], Accuracy: {accuracy:.2f}%, Epoch loss: {epoch_loss:.2f}")
 
 def main():
-    epochs = 0
+    epochs = 30
     for epoch in range(epochs):
         print("Training_accuracy: ")
         training(epochs=epochs, epoch = epoch)
@@ -172,23 +170,3 @@ if __name__ == '__main__':
 #now add model exporting to enable use in opencv model
     PATH = "/home/joel/coding/ide/pycharm/projects/face_detection/Model_Files/model_dict"
     torch.save(model.state_dict(),f=PATH)
-
-
-
-"""testing region"""
-IMAGE_PATH = "/home/joel/coding/Datasets/archive/s19/1.pgm"
-img = Image.open(IMAGE_PATH)
-
-transformed_image = transform(img)
-transformed_image = transformed_image.unsqueeze(0).to(device)
-print(transformed_image.shape)
-model_2 = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE).to(device)
-model_2.load_state_dict(torch.load(PATH, weights_only=True))
-model_2.eval()
-with torch.inference_mode():
-    y_logits = model_2(transformed_image)
-    y_prob = torch.softmax(y_logits,dim=1)
-    y_pred = y_logits.argmax(dim=1)
-    print(y_pred)
-    print(y_prob)
-    print(f"That corresponds to class: {classes[y_pred]}")
