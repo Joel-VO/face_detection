@@ -5,6 +5,8 @@ from matplotlib import pyplot as plt
 from torchvision import datasets, transforms
 from sklearn.model_selection import train_test_split
 
+from PIL import Image
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 IMAGE_SIZE = (224, 224)# setting the image size to a value of 224(change as per requirement)
@@ -22,6 +24,7 @@ transform = transforms.Compose([
 
 #ImageFolder is used to load data and label them according to folders, and the transforms applied
 dataset = datasets.ImageFolder(root=dataset_path,transform = transform)
+classes = dataset.classes
 
 #Doing a train test split according to the image index
 size = len(dataset)
@@ -36,6 +39,7 @@ test_batch = DataLoader(test_dataset, batch_size=32,shuffle=False)
 
 """uncomment the below code snippet to get a sample of the image that's in the dataset"""
 # for images, labels in train_batch:
+#     print(images[0].shape)
 #     plt.imshow(images[0].squeeze())
 #     plt.title(labels)
 #     plt.show()
@@ -45,21 +49,47 @@ test_batch = DataLoader(test_dataset, batch_size=32,shuffle=False)
 class FaceDetectionCNN (nn.Module):
     def __init__(self, input_shape: int, hidden_units: int, output_shape: int):
         super().__init__()
-        self.layer = nn.Sequential(
+        self.block_1 = nn.Sequential(
+            nn.Conv2d(in_channels=input_shape,
+                      out_channels=hidden_units,
+                      kernel_size=3,
+                      stride=1,
+                      padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=hidden_units,
+                      out_channels=hidden_units,
+                      kernel_size=3,
+                      stride=1,
+                      padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2,
+                         stride=2)
+        )
+        self.block_2 = nn.Sequential(
+            nn.Conv2d(hidden_units, hidden_units, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(hidden_units, hidden_units, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(in_features=input_shape, out_features=hidden_units),
-            nn.ReLU(),
-            nn.Linear(in_features=hidden_units, out_features=hidden_units),
-            nn.ReLU(),
-            nn.Linear(in_features=hidden_units, out_features=output_shape)
+            nn.Linear(in_features=hidden_units*56*56,
+                      out_features=output_shape)
         )
 
-    def forward(self, x):
-        return self.layer(x)
+    def forward(self, x: torch.Tensor):
+        x = self.block_1(x)
+        # print(x.shape)
+        x = self.block_2(x)
+        # print(x.shape)
+        x = self.classifier(x)
+        # print(x.shape)
+        return x
 
 # setting up input layers, hidden layers and output layers
 
-INPUT_SHAPE = IMAGE_SIZE[0]*IMAGE_SIZE[1]
+INPUT_SHAPE = 1
 HIDDEN_SHAPE = 10
 label_count = 0
 label = 0
@@ -69,14 +99,17 @@ for _, labels in dataset:
     else:
         label = labels
         label_count+=1
-OUTPUT_SHAPE = label_count
+OUTPUT_SHAPE = label_count+1
 print(OUTPUT_SHAPE)
 
 # defining model, optimizer and loss_fn
+
 model = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE).to(device)
 optimizer = torch.optim.SGD(params=model.parameters(), lr=0.01)
 loss_fn = nn.CrossEntropyLoss()
 
+# dummy_tensor = torch.randn(size = (1,224,224)).to(device)
+# model(dummy_tensor.unsqueeze(0))
 
 def testing( epochs, epoch, learning_model=model, loss_fn = loss_fn, data = test_batch):
     model.eval()
@@ -127,14 +160,35 @@ def training( epochs, epoch, learning_model=model, optimizer_fn=optimizer, loss_
     print(f"Epoch [{epoch + 1}/{epochs}], Accuracy: {accuracy:.2f}%, Epoch loss: {epoch_loss:.2f}")
 
 def main():
-    epochs = 100
+    epochs = 0
     for epoch in range(epochs):
+        print("Training_accuracy: ")
         training(epochs=epochs, epoch = epoch)
+        print("Testing_accuracy: ")
         testing(epochs=epochs, epoch = epoch)
 
 if __name__ == '__main__':
     main()
-
 #now add model exporting to enable use in opencv model
-PATH = "/home/joel/coding/ide/pycharm/projects/face_detection/Model_Files/model_dict"
-torch.save(model.state_dict(),f=PATH)
+    PATH = "/home/joel/coding/ide/pycharm/projects/face_detection/Model_Files/model_dict"
+    torch.save(model.state_dict(),f=PATH)
+
+
+
+"""testing region"""
+IMAGE_PATH = "/home/joel/coding/Datasets/archive/s19/1.pgm"
+img = Image.open(IMAGE_PATH)
+
+transformed_image = transform(img)
+transformed_image = transformed_image.unsqueeze(0).to(device)
+print(transformed_image.shape)
+model_2 = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE).to(device)
+model_2.load_state_dict(torch.load(PATH, weights_only=True))
+model_2.eval()
+with torch.inference_mode():
+    y_logits = model_2(transformed_image)
+    y_prob = torch.softmax(y_logits,dim=1)
+    y_pred = y_logits.argmax(dim=1)
+    print(y_pred)
+    print(y_prob)
+    print(f"That corresponds to class: {classes[y_pred]}")
