@@ -8,8 +8,8 @@ matplotlib.use('TkAgg')
 import os
 
 
-FOLDER_PATH = "/home/joel/coding/Datasets/processed_faces"
-SAVE_FOLDER = "/home/joel/coding/Datasets/processed_faces/final"
+FOLDER_PATH = "/home/joel/coding/Datasets/drive-download-20240920T135540Z-001/Anna P Joseph "
+SAVE_FOLDER = "/home/joel/coding/Datasets/archive/Anna P Joseph"
 
 
 if not os.path.exists(SAVE_FOLDER):

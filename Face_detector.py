@@ -21,14 +21,12 @@ cam = cv2.VideoCapture(0)
 while True:
     ret, frame = cam.read()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30,30))
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=3, minSize=(30,30))
     if len(faces)>1:
         faces = sorted(faces, key=lambda b: b[2]*b[3])
         (x, y, w, h) = faces[-1]
         frame_img = frame[y:y+h, x:x+w]
         break
-
-
 
 transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
@@ -42,7 +40,16 @@ classes = dataset.classes
 
 INPUT_SHAPE = 1
 HIDDEN_SHAPE = 10
-OUTPUT_SHAPE = 41
+label_count = 0
+label = 0
+for _, labels in dataset:
+    if label == labels:
+        continue
+    else:
+        label = labels
+        label_count+=1
+OUTPUT_SHAPE = label_count+1
+# print(OUTPUT_SHAPE)
 
 face_pil = Image.fromarray(frame_img)
 transformed_image = transform(face_pil)
