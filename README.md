@@ -1,4 +1,4 @@
-*Face detection and identification using OpenCV and CNN(TinyVGG)*
+# Face detection and identification using OpenCV and CNN(TinyVGG) #
 
 The project is divided into 3 parts, each having a unique role in the finished program
 
