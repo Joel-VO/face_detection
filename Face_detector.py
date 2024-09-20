@@ -13,8 +13,7 @@ from Model_Files.face_detect_model import FaceDetectionCNN
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 IMAGE_SIZE = (224, 224)
-IMAGE_PATH = "/home/joel/coding/Datasets/archive/s19/1.pgm"
-img = Image.open(IMAGE_PATH)
+
 
 face_cascade = cv2.CascadeClassifier('/home/joel/coding/open_cv/haarcascade_frontalface_default.xml')
 cam = cv2.VideoCapture(0)
@@ -27,11 +26,7 @@ while True:
         faces = sorted(faces, key=lambda b: b[2]*b[3])
         (x, y, w, h) = faces[-1]
         frame_img = frame[y:y+h, x:x+w]
-        cv2.imwrite(IMAGE_PATH, frame_img)
         break
-
-cam.release()
-cv2.destroyAllWindows()
 
 
 
@@ -47,22 +42,22 @@ classes = dataset.classes
 
 INPUT_SHAPE = 1
 HIDDEN_SHAPE = 10
-OUTPUT_SHAPE = 40
+OUTPUT_SHAPE = 41
 
-transformed_image = transform(img)
+face_pil = Image.fromarray(frame_img)
+transformed_image = transform(face_pil)
+
 plt.imshow(transformed_image.squeeze(),cmap='gray')
 plt.show()
-transformed_image = transformed_image.unsqueeze(0).to(device)
-print(transformed_image.shape)
+transformed_image = transformed_image.unsqueeze(0)
 
 PATH_dict = "/home/joel/coding/ide/pycharm/projects/face_detection/Model_Files/model_dict"
-model = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE).to(device)
+model = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE)
 model.load_state_dict(torch.load(PATH_dict, weights_only=True))
 model.eval()
 with torch.inference_mode():
     y_logits = model(transformed_image)
     y_prob = torch.softmax(y_logits,dim=1)
     y_pred = y_logits.argmax(dim=1)
-    print(y_pred)
-    print(y_prob)
-    print(f"That corresponds to class: {classes[y_pred]}")
+    prob_person = y_prob.max(dim=1)
+    print(f"The identified person is: {classes[y_pred]} with a probability of {float(prob_person.values)}")

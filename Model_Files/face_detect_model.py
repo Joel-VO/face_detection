@@ -5,8 +5,6 @@ from matplotlib import pyplot as plt
 from torchvision import datasets, transforms
 from sklearn.model_selection import train_test_split
 
-from PIL import Image
-
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 IMAGE_SIZE = (224, 224)# setting the image size to a value of 224(change as per requirement)
