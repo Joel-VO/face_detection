@@ -78,11 +78,11 @@ class FaceDetectionCNN (nn.Module):
 
     def forward(self, x: torch.Tensor):
         x = self.block_1(x)
-        # print(x.shape)
+        print(x.shape)
         x = self.block_2(x)
-        # print(x.shape)
+        print(x.shape)
         x = self.classifier(x)
-        # print(x.shape)
+        print(x.shape)
         return x
 
 # setting up input layers, hidden layers and output layers
