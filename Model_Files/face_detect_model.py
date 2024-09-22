@@ -9,15 +9,15 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 IMAGE_SIZE = (224, 224)# setting the image size to a value of 224(change as per requirement)
 
-dataset_path = "/home/joel/coding/Datasets/archive"
+dataset_path = "/home/joel/coding/Datasets/augmented_dataset"
 
 # transform to be applied to the raw dataset, here we ensure the images are grayscale,
 #we resize to the said size, and we convert to the image to a tensor and then normalise it
 transform = transforms.Compose([
-    transforms.Grayscale(num_output_channels=1),
+    # transforms.Grayscale(num_output_channels=1),
     transforms.Resize(IMAGE_SIZE), # temp dataset has a size of 112*92
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5], std=[0.5])
+    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
 ])
 
 #ImageFolder is used to load data and label them according to folders, and the transforms applied
@@ -32,7 +32,7 @@ train_dataset = Subset(dataset, train_indices)
 test_dataset = Subset(dataset, test_indices)
 
 #using dataloader to load small batches of data at a time, set batch size to 32
-train_batch = DataLoader(train_dataset, batch_size=32,shuffle=True)
+train_batch = DataLoader(train_dataset, batch_size=32,shuffle=True)# changed train_dataset to dataset
 test_batch = DataLoader(test_dataset, batch_size=32,shuffle=False)
 
 """uncomment the below code snippet to get a sample of the image that's in the dataset"""
@@ -78,17 +78,17 @@ class FaceDetectionCNN (nn.Module):
 
     def forward(self, x: torch.Tensor):
         x = self.block_1(x)
-        print(x.shape)
+        # print(x.shape)
         x = self.block_2(x)
-        print(x.shape)
+        # print(x.shape)
         x = self.classifier(x)
-        print(x.shape)
+        # print(x.shape)
         return x
 
 # setting up input layers, hidden layers and output layers
 
-INPUT_SHAPE = 1
-HIDDEN_SHAPE = 10
+INPUT_SHAPE = 3
+HIDDEN_SHAPE = 30
 label_count = 0
 label = 0
 for _, labels in dataset:

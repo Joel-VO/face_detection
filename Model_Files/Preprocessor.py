@@ -7,18 +7,17 @@ matplotlib.use('TkAgg')
 
 import os
 
-
-FOLDER_PATH = "/home/joel/coding/Datasets/drive-download-20240920T135540Z-001/Anna P Joseph "
-SAVE_FOLDER = "/home/joel/coding/Datasets/archive/Anna P Joseph"
-
+FOLDER_PATH = "/home/joel/coding/Datasets/augemented data/Malavika S"
+SAVE_FOLDER = "/home/joel/coding/Datasets/augmented_dataset/Malavika S"
 
 if not os.path.exists(SAVE_FOLDER):
     os.makedirs(SAVE_FOLDER)
 
 face_cascade = cv2.CascadeClassifier('/home/joel/coding/open_cv/haarcascade_frontalface_default.xml')
 
+
 transform = transforms.Compose([
-    transforms.Grayscale(num_output_channels=1),
+    # transforms.Grayscale(num_output_channels=1),
     transforms.Resize((224, 224)),
     transforms.ToTensor()
 ])
@@ -29,25 +28,23 @@ for filename in os.listdir(FOLDER_PATH):
 
         img = cv2.imread(image_path)
 
-
+        # Detect faces on the color image
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-
         faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
         if len(faces) == 0:
             print(f"No face detected in {filename}")
             continue
 
+        # Process only the largest face
         faces = sorted(faces, key=lambda b: b[2] * b[3])
         (x, y, w, h) = faces[-1]
-        face = gray[y:y + h, x:x + w]
+        face = img[y:y + h, x:x + w]
 
-        face_pil = Image.fromarray(face)
+        face_pil = Image.fromarray(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
         transformed_face = transform(face_pil)
 
         save_path = os.path.join(SAVE_FOLDER, f"processed_{filename}")
-
 
         transformed_face_pil = transforms.ToPILImage()(transformed_face)
         transformed_face_pil.save(save_path)
