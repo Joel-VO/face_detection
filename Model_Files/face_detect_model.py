@@ -9,7 +9,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 IMAGE_SIZE = (224, 224)# setting the image size to a value of 224(change as per requirement)
 
-dataset_path = "/home/joel/coding/Datasets/augmented_dataset"
+dataset_path = "/home/joel/coding/Datasets/newest augmented dataset"
 
 # transform to be applied to the raw dataset, here we ensure the images are grayscale,
 #we resize to the said size, and we convert to the image to a tensor and then normalise it
@@ -32,8 +32,8 @@ train_dataset = Subset(dataset, train_indices)
 test_dataset = Subset(dataset, test_indices)
 
 #using dataloader to load small batches of data at a time, set batch size to 32
-train_batch = DataLoader(train_dataset, batch_size=32,shuffle=True)# changed train_dataset to dataset
-test_batch = DataLoader(test_dataset, batch_size=32,shuffle=False)
+train_batch = DataLoader(train_dataset, batch_size=64,shuffle=True)# changed train_dataset to dataset
+test_batch = DataLoader(test_dataset, batch_size=64,shuffle=False)
 
 """uncomment the below code snippet to get a sample of the image that's in the dataset"""
 # for images, labels in train_batch:
@@ -88,7 +88,7 @@ class FaceDetectionCNN (nn.Module):
 # setting up input layers, hidden layers and output layers
 
 INPUT_SHAPE = 3
-HIDDEN_SHAPE = 30
+HIDDEN_SHAPE = 64
 label_count = 0
 label = 0
 for _, labels in dataset:
@@ -156,7 +156,7 @@ def training( epochs, epoch, learning_model=model, optimizer_fn=optimizer, loss_
     print(f"Epoch [{epoch + 1}/{epochs}], Accuracy: {accuracy:.2f}%, Epoch loss: {epoch_loss:.2f}")
 
 def main():
-    epochs = 30
+    epochs = 10
     for epoch in range(epochs):
         print("Training_accuracy: ")
         training(epochs=epochs, epoch = epoch)

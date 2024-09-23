@@ -7,8 +7,8 @@ matplotlib.use('TkAgg')
 
 import os
 
-FOLDER_PATH = "/home/joel/coding/Datasets/augemented data/Malavika S"
-SAVE_FOLDER = "/home/joel/coding/Datasets/augmented_dataset/Malavika S"
+FOLDER_PATH = "/home/joel/coding/Datasets/newest raw augmented/Malavika S"
+SAVE_FOLDER = "/home/joel/coding/Datasets/newest augmented dataset/Malavika S"
 
 if not os.path.exists(SAVE_FOLDER):
     os.makedirs(SAVE_FOLDER)

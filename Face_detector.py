@@ -34,12 +34,12 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
 ])
-dataset_path = "/home/joel/coding/Datasets/augmented_dataset"
+dataset_path = "/home/joel/coding/Datasets/newest augmented dataset"
 dataset = datasets.ImageFolder(root=dataset_path,transform = transform)
 classes = dataset.classes
 
 INPUT_SHAPE = 3
-HIDDEN_SHAPE = 30
+HIDDEN_SHAPE = 64
 label_count = 0
 label = 0
 for _, labels in dataset:
