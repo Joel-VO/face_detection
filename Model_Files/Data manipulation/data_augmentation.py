@@ -1,9 +1,8 @@
 import os
 from PIL import Image
-import torch
 from torchvision import transforms
 
-# Define augmentations
+# the random augmentations applied to increase the number of data
 augmentation = transforms.Compose([
     transforms.RandomHorizontalFlip(p=0.3),
     transforms.RandomRotation(20),
@@ -11,12 +10,12 @@ augmentation = transforms.Compose([
     transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),  # Resize to 224x224
 ])
 
-# Number of augmented versions you want to create per image
+# Number of augmented images created
 num_augmentations = 100
 
 # Input and output directories
-input_dir = "/home/joel/coding/Datasets/Raw data/Malavika S"
-output_dir = "/home/joel/coding/Datasets/newest raw augmented/Malavika S"
+input_dir = "path to input dir"
+output_dir = "path to output dir"
 
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
@@ -27,7 +26,7 @@ for filename in os.listdir(input_dir):
         img_path = os.path.join(input_dir, filename)
         img = Image.open(img_path).convert("RGB")  # Ensure the image is in RGB mode
 
-        # Apply augmentations multiple times to the same image
+        # applied to the same image num_augmentations times
         for i in range(num_augmentations):
             augmented_img = augmentation(img)
 

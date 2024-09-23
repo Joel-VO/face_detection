@@ -13,7 +13,7 @@ The project is divided into 3 parts, each having a unique role in the finished p
 The TinyVGG used incorporate the first block containing a convolution layer followed by another convolution layer, followed by a ReLU activation layer, then followed by a maxpool.
 This is replicated in the second block as well the difference being in the input shape. The kernal size and stride for the conv layers are set to default so there is no image resizing until the max pool layer, where the size is cut in half. 
 
-(32, 1, 224, 224) ----> (conv2d(first) -> conv2d(second) -> ReLU -> maxpool)(First conv Block) ----> (32, 10, 112, 112) -> (conv2d(first) -> conv2d(second) -> ReLU -> maxpool)(Second conv Block) ----> (32, 10, 56, 56) -> (flatten() -> nn.Linear)(Linear Block) ----> Number of classes
+(64, 3, 224, 224) ----> (conv2d(first) -> conv2d(second) -> ReLU -> maxpool)(First conv Block) ----> (64, 64, 112, 112) -> (conv2d(first) -> conv2d(second) -> ReLU -> maxpool)(Second conv Block) ----> (64, 64, 56, 56) -> (flatten() -> nn.Linear)(Linear Block) ----> Number of classes
 
 ## Usage ##
 

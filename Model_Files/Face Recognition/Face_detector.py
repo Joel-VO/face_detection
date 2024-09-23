@@ -8,7 +8,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
-from Model_Files.face_detect_model import FaceDetectionCNN
+from Model_Files.Model.face_detect_model import FaceDetectionCNN
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -40,15 +40,7 @@ classes = dataset.classes
 
 INPUT_SHAPE = 3
 HIDDEN_SHAPE = 64
-label_count = 0
-label = 0
-for _, labels in dataset:
-    if label == labels:
-        continue
-    else:
-        label = labels
-        label_count+=1
-OUTPUT_SHAPE = label_count+1
+OUTPUT_SHAPE = 6 #change for different dataset
 # print(OUTPUT_SHAPE)
 
 face_pil = Image.fromarray(cv2.cvtColor(frame_img, cv2.COLOR_BGR2RGB))
@@ -62,7 +54,7 @@ plt.imshow(image_for_plot.squeeze()) #,cmap='gray'
 plt.show()
 transformed_image = transformed_image.unsqueeze(0)
 
-PATH_dict = "/home/joel/coding/ide/pycharm/projects/face_detection/Model_Files/model_dict"
+PATH_dict = "/Model_Files/model_dict"
 model = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE)
 model.load_state_dict(torch.load(PATH_dict, weights_only=True))
 model.eval()

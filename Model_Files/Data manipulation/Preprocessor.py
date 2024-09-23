@@ -3,12 +3,12 @@ from torchvision import transforms
 from PIL import Image
 import matplotlib
 
-matplotlib.use('TkAgg')
+matplotlib.use('TkAgg')# used for linux in wayland use cases
 
 import os
 
-FOLDER_PATH = "/home/joel/coding/Datasets/newest raw augmented/Malavika S"
-SAVE_FOLDER = "/home/joel/coding/Datasets/newest augmented dataset/Malavika S"
+FOLDER_PATH = "path to input dir"
+SAVE_FOLDER = "path to output dir"
 
 if not os.path.exists(SAVE_FOLDER):
     os.makedirs(SAVE_FOLDER)
@@ -16,8 +16,7 @@ if not os.path.exists(SAVE_FOLDER):
 face_cascade = cv2.CascadeClassifier('/home/joel/coding/open_cv/haarcascade_frontalface_default.xml')
 
 
-transform = transforms.Compose([
-    # transforms.Grayscale(num_output_channels=1),
+transform = transforms.Compose([# resizes and converts to tensor
     transforms.Resize((224, 224)),
     transforms.ToTensor()
 ])
@@ -41,7 +40,7 @@ for filename in os.listdir(FOLDER_PATH):
         (x, y, w, h) = faces[-1]
         face = img[y:y + h, x:x + w]
 
-        face_pil = Image.fromarray(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
+        face_pil = Image.fromarray(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))# converts the image to RGB and then to array format
         transformed_face = transform(face_pil)
 
         save_path = os.path.join(SAVE_FOLDER, f"processed_{filename}")

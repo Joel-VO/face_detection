@@ -6,16 +6,17 @@ from torchvision import datasets, transforms
 from sklearn.model_selection import train_test_split
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print(f"running on {device} with {torch.cuda.get_device_name()}")
 
 IMAGE_SIZE = (224, 224)# setting the image size to a value of 224(change as per requirement)
 
 dataset_path = "/home/joel/coding/Datasets/newest augmented dataset"
 
-# transform to be applied to the raw dataset, here we ensure the images are grayscale,
-#we resize to the said size, and we convert to the image to a tensor and then normalise it
+# transform to be applied to the raw dataset,we resize to the said size,
+# and we convert to the image to a tensor and then normalise it
+
 transform = transforms.Compose([
-    # transforms.Grayscale(num_output_channels=1),
-    transforms.Resize(IMAGE_SIZE), # temp dataset has a size of 112*92
+    transforms.Resize(IMAGE_SIZE),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
 ])
@@ -43,7 +44,6 @@ test_batch = DataLoader(test_dataset, batch_size=64,shuffle=False)
 #     plt.show()
 #     break
 
-"""convert this model to a CNN"""
 class FaceDetectionCNN (nn.Module):
     def __init__(self, input_shape: int, hidden_units: int, output_shape: int):
         super().__init__()
@@ -52,7 +52,7 @@ class FaceDetectionCNN (nn.Module):
                       out_channels=hidden_units,
                       kernel_size=3,
                       stride=1,
-                      padding=1),
+                      padding=1),#first conv layer, padding of one to ensure same size output
             nn.ReLU(),
             nn.Conv2d(in_channels=hidden_units,
                       out_channels=hidden_units,
@@ -61,7 +61,7 @@ class FaceDetectionCNN (nn.Module):
                       padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2,
-                         stride=2)
+                         stride=2)# maxpool applied to reduce compuatations and to generalise better
         )
         self.block_2 = nn.Sequential(
             nn.Conv2d(hidden_units, hidden_units, 3, padding=1),
@@ -78,7 +78,7 @@ class FaceDetectionCNN (nn.Module):
 
     def forward(self, x: torch.Tensor):
         x = self.block_1(x)
-        # print(x.shape)
+        # print(x.shape) # use this to debug if you're training for more than OUTPUT_SHAPE classes
         x = self.block_2(x)
         # print(x.shape)
         x = self.classifier(x)
@@ -98,10 +98,9 @@ for _, labels in dataset:
         label = labels
         label_count+=1
 OUTPUT_SHAPE = label_count+1
-print(OUTPUT_SHAPE)
+# print(OUTPUT_SHAPE) # for debugging
 
 # defining model, optimizer and loss_fn
-
 model = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE).to(device)
 optimizer = torch.optim.SGD(params=model.parameters(), lr=0.01)
 loss_fn = nn.CrossEntropyLoss()
@@ -165,6 +164,7 @@ def main():
 
 if __name__ == '__main__':
     main()
-#now add model exporting to enable use in opencv model
-    PATH = "/home/joel/coding/ide/pycharm/projects/face_detection/Model_Files/model_dict"
+
+    PATH = "/Model_Files/model_dict"
     torch.save(model.state_dict(),f=PATH)
+    # this model is then used in the face recognition code
