@@ -33,7 +33,7 @@ train_dataset = Subset(dataset, train_indices)
 test_dataset = Subset(dataset, test_indices)
 
 #using dataloader to load small batches of data at a time, set batch size to 32
-train_batch = DataLoader(train_dataset, batch_size=64,shuffle=True)# changed train_dataset to dataset
+train_batch = DataLoader(train_dataset, batch_size=64,shuffle=True)
 test_batch = DataLoader(test_dataset, batch_size=64,shuffle=False)
 
 """uncomment the below code snippet to get a sample of the image that's in the dataset"""
@@ -165,6 +165,6 @@ def main():
 if __name__ == '__main__':
     main()
 
-    PATH = "/Model_Files/model_dict"
+    PATH = "/home/joel/coding/ide/pycharm/projects/face_detection/Model_Files/Model/model_dict"
     torch.save(model.state_dict(),f=PATH)
     # this model is then used in the face recognition code
