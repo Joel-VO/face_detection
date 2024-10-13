@@ -15,7 +15,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 IMAGE_SIZE = (224, 224)
 
 
-face_cascade = cv2.CascadeClassifier('/home/joel/coding/open_cv/haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('/path/haarcascade_frontalface_default.xml')
 cam = cv2.VideoCapture(0)
 cont = True
 while cont:
@@ -36,7 +36,7 @@ while cont:
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
     ])
-    dataset_path = "/home/joel/coding/Datasets/newest augmented dataset"
+    dataset_path = "/path_to_dataset/"
     dataset = datasets.ImageFolder(root=dataset_path,transform = transform)
     classes = dataset.classes
 
@@ -56,7 +56,7 @@ while cont:
     plt.show()
     transformed_image = transformed_image.unsqueeze(0)
 
-    PATH_dict = "/home/joel/coding/ide/pycharm/projects/face_detection/Model_Files/Model/model_dict"
+    PATH_dict = "/path_to_the_model/model_dict"
     model = FaceDetectionCNN(INPUT_SHAPE, HIDDEN_SHAPE, OUTPUT_SHAPE)
     model.load_state_dict(torch.load(PATH_dict, weights_only=True))
     model.eval()
