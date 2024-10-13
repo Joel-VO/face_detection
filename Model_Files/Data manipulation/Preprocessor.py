@@ -13,7 +13,7 @@ SAVE_FOLDER = "path to output dir"
 if not os.path.exists(SAVE_FOLDER):
     os.makedirs(SAVE_FOLDER)
 
-face_cascade = cv2.CascadeClassifier('/home/joel/coding/open_cv/haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('/path/haarcascade_frontalface_default.xml')
 
 
 transform = transforms.Compose([# resizes and converts to tensor
