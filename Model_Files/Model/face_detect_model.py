@@ -10,7 +10,7 @@ print(f"running on {device} with {torch.cuda.get_device_name()}")
 
 IMAGE_SIZE = (224, 224)# setting the image size to a value of 224(change as per requirement)
 
-dataset_path = "/home/joel/coding/Datasets/newest augmented dataset"
+dataset_path = "/path_to_dataset"
 
 # transform to be applied to the raw dataset,we resize to the said size,
 # and we convert to the image to a tensor and then normalise it
@@ -165,6 +165,6 @@ def main():
 if __name__ == '__main__':
     main()
 
-    PATH = "/home/joel/coding/ide/pycharm/projects/face_detection/Model_Files/Model/model_dict"
+    PATH = "/path_to_save_model/model_dict"
     torch.save(model.state_dict(),f=PATH)
     # this model is then used in the face recognition code
